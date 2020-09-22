@@ -1,0 +1,35 @@
+#define PIN_LED 7
+
+void setup() {
+  pinMode(PIN_LED, OUTPUT);
+  Serial.begin(115200); // Initialize serial port
+  while (!Serial) {
+    ; // wait for serial port to connect.
+  }
+  digitalWrite(PIN_LED, 0); // turn off LED.
+}
+
+int set_period(int period) { // period: 100 to 10000 (unit: us)
+  period = period * 1/1000000;
+  return period;
+  // set_preiod(100) = 0.1ms
+  // set_period(1000) = 1ms
+  // set_period(10000) = 10ms
+}
+
+void set_duty(int duty) { // duty: 0 to 100 (unit: %)
+  duty = duty * 50 * set_period(10000);
+  digitalWrite(PIN_LED, HIGH);
+  delayMicroseconds(duty);
+  digitalWrite(PIN_LED, LOW);
+  delayMicroseconds((5000) * set_period(10000) - duty);
+}
+
+void loop() {
+  for(int duty_value = 0; duty_value<=100; duty_value++) {
+    set_duty(duty_value);
+  }
+  for(int duty_value = 100; duty_value>=0; duty_value--) {
+    set_duty(duty_value);
+  }
+}
